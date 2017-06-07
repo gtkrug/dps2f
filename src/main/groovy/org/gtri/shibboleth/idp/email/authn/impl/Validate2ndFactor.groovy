@@ -88,7 +88,6 @@ class Validate2ndFactor extends AbstractValidationAction {
 
         log.debug("{} validating g2f response for user {}", logPrefix, g2fUserContext.username)
 
-        def tokenResponse = g2fUserContext.tokenResponse
         /** Check for errorCode in response */
         def result = dataStore.finishAuthentication(g2fUserContext)
         if (result) {

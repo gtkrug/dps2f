@@ -79,8 +79,8 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
             log.warn("{} No principal name available to cross-check G2F result", getLogPrefix())
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS)
             return false
-        }
-
+        } 
+        log.debug ("Initailzie Pre-execute: g2fUserContext Initialized with email = {}", g2fUserContext.email);
         return true
     }
 
@@ -93,13 +93,15 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
             log.debug("{} Principal name {}", getLogPrefix(), username)
 
             if (!g2fUserContext.initialized) {
-                log.warn ("User Context for {} did not exist. ", username);
+                log.info ("User Context for {} was not marked as initialized. ", username);
                 g2fUserContext.username = username
                 g2fUserContext.appId = appId
+                
                 g2fUserContext.initialized = true
             } else {
                 log.warn ("User Context for {} already exists. ", username);
             }
+            g2fUserContext.token = (int)100000 + (int)(Math.random() * 900000);  // Generates a random 6 digit number between 100,000 and 999,999
             def res = dataStore.beginAuthentication(g2fUserContext)
             if (!res) {
                 def state = g2fUserContext.state

@@ -25,6 +25,11 @@ import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
 import org.apache.http.protocol.HttpContext
 
+// For emailing
+import java.util.*
+import javax.mail.*
+import javax.mail.internet.*
+
 // Mailserver Stuff
 // TBD
 
@@ -56,9 +61,9 @@ class MailServerDataStore implements DeviceDataStore {
         log.debug("Send e-mail to e-mail address {} for user {} with token {}", email, username, token)
         try {
             log.debug("beginAuthentication() - Transmitting 2nd factor to user via e-mail")
-            // TBD - Send e-mail with 2nd factor code
-        } catch (Exception e) {
-            log.error("E-mail Transmission error: {} {}", e.statusCode, e.responseBodyAsString)
+            sendEmail (email, token);
+        } catch (MessagingException e) {
+            log.error("E-mail Transmission error: {}", e.toSring())
             return false
         }
         return true
@@ -67,12 +72,55 @@ class MailServerDataStore implements DeviceDataStore {
     @Override
     boolean finishAuthentication(G2fUserContext g2fUserContext) {
         def username  = g2fUserContext.username
-        def tokenResp = g2fUserContext.tokenResponse
-        def token     = g2fUserContext.token
+        int tokenResp = g2fUserContext.tokenResponse.toInteger()
+        int token     = g2fUserContext.token.toInteger()
         log.debug("finishAuthentication() ")
         log.debug("Verifying token matches for user {}; token sent was {} with response {}", username, token, tokenResp)
-        
-        return ( tokenResp == token );
+
+        if ( tokenResp == token ) {
+           log.debug ("{} Entered Valid 2nd Factor");
+           return true;
+        } else {
+           log.warn ("{} Entered Invalid 2nd Factor - Requesting Again");
+           return false;
+        }
     }
+
+    private void sendEmail (String EmailAddress, int Token) throws MessagingException {
+
+
+        log.debug ("Trying to send email to ({}) with server ({}) from ({})", EmailAddress, Server, Address);
+
+        Properties properties = System.getProperties();
+
+        Integer token = new Integer(Token);
+
+        // Setup mail server
+        properties.setProperty("mail.smtp.host", Server);
+
+        // Get the default Session object.
+        Session session = Session.getDefaultInstance(properties);
+
+        // Create a default MimeMessage object.
+        MimeMessage message = new MimeMessage(session);
+
+        // Set From: header field of the header.
+        message.setFrom(new InternetAddress(Address));
+
+        // Set To: header field of the header.
+        message.addRecipient(Message.RecipientType.TO,
+                                    new InternetAddress(EmailAddress));
+
+        // Set Subject: header field
+        message.setSubject("One-Time Login Token");
+
+        // Now set the actual message
+        message.setText("Please input this token: " + token.toString() );
+
+        // Send message
+        Transport.send(message);
+
+        log.debug ("Successfully e-mailed one time token to {}", EmailAddress);
+   }
 
 }
