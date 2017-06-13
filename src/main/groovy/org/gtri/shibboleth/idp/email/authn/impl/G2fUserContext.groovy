@@ -59,11 +59,7 @@ class G2fUserContext extends BaseContext {
      */
 
     def getErrorMessage() {
-        // TODO: fix proper error codes and add internationalization support
-        if (state) {
-            state = ""
-            return "An error has occurred, please try again!"
-        }
-        return ""
+        log.debug ("g2fUserContext.state = {}", state)
+        return state
     }
 }

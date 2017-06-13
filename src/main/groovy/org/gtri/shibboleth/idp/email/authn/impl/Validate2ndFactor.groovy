@@ -95,6 +95,7 @@ class Validate2ndFactor extends AbstractValidationAction {
              recordSuccess()
              buildAuthenticationResult(profileRequestContext, authenticationContext)
         } else {
+             g2fUserContext.state = "Invalid 2nd Factor Code Entered.  New code transmitted, please check e-mail for latest code and try again!";
              handleError(profileRequestContext, authenticationContext, 'InvalidCredentials', AuthnEventIds.INVALID_CREDENTIALS)
              recordFailure()
         }

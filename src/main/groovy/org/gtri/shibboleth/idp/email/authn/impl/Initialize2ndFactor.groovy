@@ -96,10 +96,10 @@ public class Initialize2ndFactor extends AbstractExtractionAction {
                 log.info ("User Context for {} was not marked as initialized. ", username);
                 g2fUserContext.username = username
                 g2fUserContext.appId = appId
-                
+                g2fUserContext.state = ""   
                 g2fUserContext.initialized = true
             } else {
-                log.warn ("User Context for {} already exists. ", username);
+                log.warn ("User Context for {} already exists; perhaps a failed login: {}", username, g2fUserContext.state);
             }
             g2fUserContext.token = (int)100000 + (int)(Math.random() * 900000);  // Generates a random 6 digit number between 100,000 and 999,999
             def res = dataStore.beginAuthentication(g2fUserContext)
