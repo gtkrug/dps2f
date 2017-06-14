@@ -71,19 +71,25 @@ class MailServerDataStore implements DeviceDataStore {
 
     @Override
     boolean finishAuthentication(G2fUserContext g2fUserContext) {
-        def username  = g2fUserContext.username
-        int tokenResp = g2fUserContext.tokenResponse.toInteger()
-        int token     = g2fUserContext.token.toInteger()
-        log.debug("finishAuthentication() ")
-        log.debug("Verifying token matches for user {}; token sent was {} with response {}", username, token, tokenResp)
 
-        if ( tokenResp == token ) {
-           log.debug ("{} Entered Valid 2nd Factor");
-           return true;
-        } else {
-           log.warn ("{} Entered Invalid 2nd Factor - Requesting Again");
-           return false;
-        }
+        try {
+          def username  = g2fUserContext.username
+          int tokenResp = g2fUserContext.tokenResponse.toInteger()
+          int token     = g2fUserContext.token.toInteger()
+          log.debug("finishAuthentication() ")
+          log.debug("Verifying token matches for user {}; token sent was {} with response {}", username, token, tokenResp)
+
+          if ( tokenResp == token ) {
+            log.debug ("Entered Valid 2nd Factor");
+            return true;
+          } else {
+            log.warn ("Entered Invalid 2nd Factor - Requesting Again");
+            return false;
+         }
+       } catch (Exception e) {
+         log.error ("Exception when trying to validate 2nd Factor.  Possibly input was not a number.  {}", e)
+         return false;
+       }
     }
 
     private void sendEmail (String EmailAddress, int Token) throws MessagingException {

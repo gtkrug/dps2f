@@ -69,18 +69,18 @@
                         "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
                     username = input.getSubcontext("net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName();
                     resCtx.setPrincipal(username);
-                    resCtx.getRequestedIdPAttributeNames().add("SecondFactorCode");
                     resCtx.getRequestedIdPAttributeNames().add("Email");
+                    resCtx.getRequestedIdPAttributeNames().add("UserLocation");
                     resCtx.resolveAttributes(custom);
                     userCtx = input.getSubcontext("org.gtri.shibboleth.idp.email.authn.impl.G2fUserContext", true);
 
                     // Check for an attribute that authorizes use of first factor.
-                    attribute = resCtx.getResolvedIdPAttributes().get("SecondFactorCode");
                     emailAttr = resCtx.getResolvedIdPAttributes().get("Email");
+                    userLoc   = resCtx.getResolvedIdPAttributes().get("UserLocation");
                     valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
-                    if (attribute != null) {
-                        logger.debug ("2nd Factor DB Value {}", attribute.getValues().get(0))
-                        if (attribute.getValues().contains(new valueType("2ndFactorNotRequired"))) {
+                    if (userLoc != null) {
+                        logger.debug ("User Location alue {}", userLoc.getValues().get(0))
+                        if (userLoc.getValues().contains(new valueType("Internal"))) {
                           nextFlow = null;
                         }
                         else {
@@ -88,13 +88,12 @@
                           email = emailAttr.getValues().get(0).getValue();
                           logger.debug ("Check 2nd Factor - Email Address {}", email);
                           userCtx.setEmail(email);
-                          userCtx.setEmail(username);
-                          // ?? Do I need to add the userCtx back to the input?
+                          userCtx.setUsername(username);
                           authCtx.addSubcontext (userCtx);
                         }
                     }
                     else {
-                        logger.debug ("Error getting SecondFactorCode Attribute"); 
+                        logger.debug ("Error resolving email and location attributes"); 
                     }
                     
                     input.removeSubcontext(resCtx);   // cleanup
