@@ -28,6 +28,6 @@ There are several configuration files that need to be added/updated based on the
 * **conf/g2f.properties** - This file should be in the IDP/conf directory.  It should be configured with the mailserver and the from adress for e-mails sent by the 2nd Factor module.
 * **conf/authn/mfa-authn-config.xml** - Update based on the build's version, which includes Javascript code to intelligently determine if a 2nd factor is required and to update the user session with data needed to execute the 2nd factor.
 * **conf/attribute-resolver.xml** - This file needs to be updated based on the example, specifically to support a new attribute for resolving the user's access type.
-* **conf/ip.js** - This file can be placed anywhere as the path to it is specified in attribute-resolver.xml.  It is a sample javascript for determining if a user is on an internal network or external network.  It should be customized appropriately.
+* **conf/ip.js** - This file can be placed anywhere as the path to it is specified in attribute-resolver.xml.  It is a sample javascript for determining if a user is on an internal network or external network.  It should be customized appropriately.  Be aware that the surrounding environment (apache/tomcat/proxies/load balancers) must be very carefully configured to support the methodolgy of remote address determination used by this javascript file.  
 * **views/g2f.vm** - This is the velocity template for entering the 2nd factor code.  It should be updated in terms of CSS and graphics to match the look & feel of the login page.
 
