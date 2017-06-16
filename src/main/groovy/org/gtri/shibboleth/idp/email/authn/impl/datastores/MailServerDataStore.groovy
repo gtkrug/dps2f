@@ -125,7 +125,9 @@ class MailServerDataStore implements DeviceDataStore {
 
 
         // Now set the actual message
-        message.setText(msgText);
+        //message.setText(msgText);
+	//PB- using setConent fot http body
+	message.setContent(msgText, "text/html; charset=utf-8");
 
         // Send message
         Transport.send(message);
