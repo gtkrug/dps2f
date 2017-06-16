@@ -38,17 +38,19 @@ import javax.mail.internet.*
 class MailServerDataStore implements DeviceDataStore {
     private String Server
     private String Address
+    private String EmailTemplate
     
     // TBD - Private Data Neccessary for Connection to SMTP Server
 
     /** Constructor */
-    MailServerDataStore(String smtpServer, String fromAddress) {
+    MailServerDataStore(String smtpServer, String fromAddress, String emailTemplate) {
         log.debug("Mail Server constructor: ({})", smtpServer);
         try {
             Server  = smtpServer;
             Address = fromAddress;
+            EmailTemplate = new File (emailTemplate).text
         } catch (Exception ex) {
-           log.error("Could not connect to Mail Server: {} failure", ex);
+           log.error("Failed to load email template from file {}; Exception: {}", emailTemplate, ex);
         }
 
     }
@@ -99,7 +101,8 @@ class MailServerDataStore implements DeviceDataStore {
 
         Properties properties = System.getProperties();
 
-        Integer token = new Integer(Token);
+        Integer token  = new Integer(Token);
+        String msgText = EmailTemplate.replaceAll ("TOKEN", token.toString());
 
         // Setup mail server
         properties.setProperty("mail.smtp.host", Server);
@@ -120,13 +123,14 @@ class MailServerDataStore implements DeviceDataStore {
         // Set Subject: header field
         message.setSubject("One-Time Login Token");
 
+
         // Now set the actual message
-        message.setText("Please input this token: " + token.toString() );
+        message.setText(msgText);
 
         // Send message
         Transport.send(message);
 
-        log.debug ("Successfully e-mailed one time token to {}", EmailAddress);
+        log.debug ("Successfully e-mailed {} one time token to {}", EmailAddress);
    }
 
 }

@@ -23,6 +23,7 @@
           class="org.gtri.shibboleth.idp.email.authn.impl.datastores.MailServerDataStore"
           c:smtpServer="%{g2f.datastore.mailserver:#{null}}"
           c:fromAddress="%{g2f.datastore.fromaddress:#{null}}"
+          c:emailTemplate="%{g2f.datastore.emailtemplate:#{null}}"
           lazy-init="true"/>
 
 
