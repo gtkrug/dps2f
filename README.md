@@ -25,7 +25,7 @@ then added to the idp.war file by exuecting **[IDP_HOME]/bin/build.sh**.
 There are several configuration files that need to be added/updated based on the examples/distribution files for this package:
 
 * **conf/idp.properties** - This needs to be updated to specify authentication via the MFA method and to include the g2f.properties file (see [G2F Flow](https://github.com/gtkrug/shib-g2f) instructions for details).
-* **conf/g2f.properties** - This file should be in the IDP/conf directory.  It should be configured with the mailserver and the from adress for e-mails sent by the 2nd Factor module.
+* **conf/g2f.properties** - This file should be in the IDP/conf directory.  It should be configured with the mailserver, the from address for e-mails, and a filename that includes an e-mail template.  Within the email template **TOKEN** will be replaced with the generated 6-digit token.
 * **conf/authn/mfa-authn-config.xml** - Update based on the build's version, which includes Javascript code to intelligently determine if a 2nd factor is required and to update the user session with data needed to execute the 2nd factor.
 * **conf/attribute-resolver.xml** - This file needs to be updated based on the example, specifically to support a new attribute for resolving the user's access type.
 * **conf/ip.js** - This file can be placed anywhere as the path to it is specified in attribute-resolver.xml.  It is a sample javascript for determining if a user is on an internal network or external network.  It should be customized appropriately.  Be aware that the surrounding environment (apache/tomcat/proxies/load balancers) must be very carefully configured to support the methodolgy of remote address determination used by this javascript file.  
