@@ -79,6 +79,12 @@ class MailServerDataStore implements DeviceDataStore {
           int tokenResp = g2fUserContext.tokenResponse.toInteger()
           int token     = g2fUserContext.token.toInteger()
           log.debug("finishAuthentication() ")
+
+          if (tokenResp == 10) {
+            log.warn("No token input.  Sending a new token.")
+            return false;
+          }
+
           log.debug("Verifying token matches for user {}; token sent was {} with response {}", username, token, tokenResp)
 
           if ( tokenResp == token ) {

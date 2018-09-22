@@ -70,10 +70,8 @@ class Validate2ndFactor extends AbstractValidationAction {
 
         def tokenResponse = StringSupport.trimOrNull(servletRequest.getParameter("code"))
         if (!tokenResponse) {
-            log.warn("{} no g2F response in the request", getLogPrefix())
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS)
-            recordFailure()
-            return false
+            log.warn("{} no token in the request, setting to an invalid value forcing a resend.", getLogPrefix())
+            tokenResponse = StringSupport.trimOrNull("10");
         }
         g2fUserContext.tokenResponse = tokenResponse
         log.debug("{} got g2F response: {}", getLogPrefix(), tokenResponse)
